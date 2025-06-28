@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>楼道露出游戏</title>
+  <script src="https://cdn.tailwindcss.com?enable-production-mode"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <!-- 初始页面 -->
+  <div id="startPage" class="fixed-center w-full max-w-md p-6 md:p-8 game-card transition-all duration-500">
+    <div class="text-center mb-8">
+      <div class="mb-6">
+        <div class="inline-block p-3 bg-blue-50 rounded-full mb-4 animate-bounce">
+          <i class="fa fa-building text-blue-500 text-3xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-neutral-700 mb-2">
+          楼道露出游戏
+        </h1>
+        <p class="text-neutral-500 mb-6">
+          是刺激的楼道露出挑战的说
+        </p>
+      </div>
+      
+      <!-- 楼层输入框 -->
+      <div class="mb-6">
+        <label for="startFloor" class="block text-sm font-medium text-neutral-700 mb-2">
+          开始楼层 <span class="text-accent">*</span>
+        </label>
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fa fa-building text-neutral-400"></i>
+          </div>
+          <input 
+            type="number" 
+            id="startFloor" 
+            class="block w-full pl-10 pr-3 py-3 border border-neutral-300 rounded-lg input-focus transition-colors"
+            placeholder="请输入楼层数"
+            min="1"
+            required
+          >
+          <!-- 实时验证提示 -->
+          <div id="floorValidation" class="absolute right-3 bottom-0 text-xs text-neutral-500 mt-1 hidden">
+            <i class="fa fa-check text-success mr-1"></i> 有效输入
+          </div>
+        </div>
+        <p class="text-xs text-neutral-500 mt-1">请输入1或更大的整数</p>
+      </div>
+      
+      <button id="startGameBtn" class="btn-primary w-full" disabled>
+        <i class="fa fa-play mr-2"></i>
+        <span>开始游戏</span>
+      </button>
+      
+      <!-- 游戏说明 -->
+      <div class="mt-8 text-left bg-blue-50 p-4 rounded-xl">
+        <h3 class="font-bold text-blue-700 mb-2 flex items-center">
+          <i class="fa fa-info-circle mr-2"></i> 游戏规则
+        </h3>
+        <ul class="text-sm text-neutral-600 space-y-1">
+          <li>• 每次下降1-5层，有随机事件发生</li>
+          <li>• 如果下降到0层以下，会反弹为正数楼层</li>
+          <li>• 正好到达0层则游戏胜利</li>
+          <li>• 每次下降会随机选择一件装备脱下</li>
+          <li>• 当所有装备已脱下，随机事件效果×2</li>
+          <li>• 准备阶段：将一套衣服放在塑料袋中，连同家门钥匙一起放在一楼</li>
+          <li>• 游戏结束后穿备用衣服坐电梯回各楼层取回衣服</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 游戏主页面 -->
+  <div id="gamePage" class="w-full max-w-md mx-auto hidden">
+    <!-- 顶部状态指示器 -->
+    <div class="game-status-indicator">
+      <div class="status-dot" id="gameStatusDot"></div>
+      <span>游戏中</span>
+    </div>
+    
+    <!-- 头部状态 -->
+    <div class="text-center mb-4 mt-6 animate-fade-in">
+      <h1 class="text-2xl font-bold text-neutral-700 mb-1">
+        楼层下降中
+      </h1>
+      <p id="currentFloor" class="text-sm text-neutral-500">
+        当前楼层: <span class="floor-indicator text-accent">--</span>
+      </p>
+    </div>
+    
+    <!-- 装备状态 -->
+    <div id="equipmentStatus" class="equipment-container">
+      <div class="equipment-item" data-equipment="pants">
+        <i class="fa fa-male equipment-icon"></i> 裤子
+      </div>
+      <div class="equipment-item" data-equipment="underwear">
+        <i class="fa fa-venus equipment-icon"></i> 内裤
+      </div>
+      <div class="equipment-item" data-equipment="shoes">
+        <i class="fa fa-shopping-bag equipment-icon"></i> 鞋
+      </div>
+      <div class="equipment-item" data-equipment="shirt">
+        <i class="fa fa-black-tie equipment-icon"></i> 上衣
+      </div>
+      <div class="equipment-item" data-equipment="coat">
+        <i class="fa fa-snowflake-o equipment-icon"></i> 外套
+      </div>
+      <div class="equipment-item" data-equipment="socks">
+        <i class="fa fa-socks equipment-icon"></i> 袜子
+      </div>
+    </div>
+    
+    <!-- 主卡片 -->
+    <div class="bg-white rounded-2xl game-card p-6 md:p-8 mb-6">
+      <!-- 中心显示区域 -->
+      <div id="centerDisplay" class="flex flex-col items-center justify-center min-h-[250px]">
+        <!-- 初始提示 -->
+        <div class="text-center text-neutral-500">
+          <i class="fa fa-info-circle text-2xl mb-2 text-primary"></i>
+          <p>点击下方按钮开始下降楼层</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部按钮区域 -->
+  <div class="bottom-button-container">
+    <button id="generateBtn" class="btn-primary bottom-button animate-button-bounce" disabled>
+      <i class="fa fa-random mr-2"></i>
+      <span>下降楼层 (1-5层)</span>
+    </button>
+  </div>
+
+  <!-- 特殊选项模态框 -->
+  <div id="specialOptionModal" class="modal-overlay">
+    <div class="special-modal">
+      <h3 class="text-xl font-bold text-neutral-700 mb-2">
+        <i class="fa fa-exclamation-triangle text-warning mr-2"></i> 特殊选项
+      </h3>
+      <p id="specialOptionMessage" class="text-neutral-600">
+        您再次选择了同一件装备，请选择操作：
+      </p>
+      
+      <div id="specialOptions" class="special-options">
+        <div class="special-option option-a" data-option="a">
+          <i class="fa fa-random"></i>
+          <div>
+            <h4 class="font-semibold">选项 A</h4>
+            <p class="text-sm">随机脱下另外两件装备</p>
+          </div>
+        </div>
+        <div class="special-option option-b" data-option="b">
+          <i class="fa fa-hand-pointer-o"></i>
+          <div>
+            <h4 class="font-semibold">选项 B</h4>
+            <p class="text-sm">选择一件装备脱下（ZW30秒）</p>
+          </div>
+        </div>
+      </div>
+      
+      <div id="optionBContent" class="hidden">
+        <h4 class="font-semibold text-neutral-700 mt-4 mb-3">选择要脱下的装备：</h4>
+        <div id="equipmentSelector" class="equipment-selector"></div>
+      </div>
+      
+      <div id="zwTimerContent" class="hidden">
+        <div class="zw-timer">
+          ZW倒计时: <span id="zwTimerValue">30</span>秒
+        </div>
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+        <button id="skipZwBtn" class="zw-button">跳过等待</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 复制成功提示 -->
+  <div id="copyToast" class="fixed bottom-4 right-4 bg-neutral-700 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center">
+    <i class="fa fa-check mr-2"></i>
+    <span>已复制到剪贴板</span>
+  </div>
+</body>
+</html>
