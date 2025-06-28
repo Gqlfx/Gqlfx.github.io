@@ -1,0 +1,487 @@
+<style>
+  :root {
+    --primary: #165DFF;
+    --secondary: #36CBCB;
+    --accent: #FF7D00;
+    --success: #00B42A;
+    --warning: #FF7D00;
+    --danger: #F53F3F;
+    --neutral-100: #F5F7FA;
+    --neutral-200: #E4E7ED;
+    --neutral-300: #C0C4CC;
+    --neutral-400: #909399;
+    --neutral-500: #606266;
+    --neutral-600: #303133;
+    --neutral-700: #1E1E1E;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #f0f4ff, #e6f7ff);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    margin: 0;
+    position: relative;
+    padding-bottom: 100px;
+  }
+  
+  .game-card {
+    box-shadow: 0 15px 30px -5px rgba(22, 93, 255, 0.1), 0 10px 15px -5px rgba(22, 93, 255, 0.05);
+    transition: all 0.3s ease;
+    border-radius: 1.5rem;
+    background: white;
+    overflow: hidden;
+    max-width: 95%;
+    margin: 0 auto;
+  }
+  
+  .game-card:hover {
+    box-shadow: 0 20px 40px -5px rgba(22, 93, 255, 0.15), 0 15px 25px -5px rgba(22, 93, 255, 0.1);
+  }
+  
+  .btn-primary {
+    background-color: var(--primary);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0e4dcc;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.15);
+  }
+  
+  .btn-primary:disabled {
+    background-color: var(--neutral-300);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  @keyframes fallIn {
+    0% { transform: scale(0.8) translateY(-20px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  
+  @keyframes buttonBounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  @keyframes bounceEffect {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-20px); }
+    60% { transform: translateY(-10px); }
+  }
+  
+  @keyframes confetti {
+    0% { transform: translateY(0) rotate(0); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  
+  @keyframes equipmentHighlight {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 125, 0, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 125, 0, 0); }
+    100% { transform: scale(1); }
+  }
+  
+  .animate-fall-in {
+    animation: fallIn 0.5s ease-out forwards;
+  }
+  
+  .animate-button-bounce {
+    animation: buttonBounce 0.3s ease-out;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in forwards;
+  }
+  
+  .animate-bounce {
+    animation: bounceEffect 1s ease;
+  }
+  
+  .animate-pulse {
+    animation: pulse 1s infinite;
+  }
+  
+  .animate-equipment-highlight {
+    animation: equipmentHighlight 1.5s ease;
+  }
+  
+  .text-accent {
+    color: var(--accent);
+  }
+  
+  .text-secondary {
+    color: var(--secondary);
+  }
+  
+  .text-success {
+    color: var(--success);
+  }
+  
+  .text-warning {
+    color: var(--warning);
+  }
+  
+  .text-danger {
+    color: var(--danger);
+  }
+  
+  .text-neutral-500 {
+    color: var(--neutral-500);
+  }
+  
+  .text-neutral-700 {
+    color: var(--neutral-700);
+  }
+  
+  .fixed-center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+  }
+  
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    z-index: 10;
+    animation: confetti 2s ease-in forwards;
+  }
+  
+  .floor-indicator {
+    display: inline-block;
+    min-width: 60px;
+    text-align: center;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background-color: #f0f7ff;
+    font-weight: 600;
+    margin: 0 5px;
+  }
+  
+  .event-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background-color: #e6f7ff;
+    color: var(--primary);
+    font-size: 0.85rem;
+    margin: 5px 0;
+    font-weight: 500;
+  }
+  
+  .bounce-info {
+    background-color: #fff7e6;
+    border-left: 3px solid var(--warning);
+    padding: 10px 15px;
+    border-radius: 0 8px 8px 0;
+    margin: 10px 0;
+    font-size: 0.9rem;
+  }
+  
+  /* 装备系统样式 */
+  .equipment-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 15px 0;
+  }
+  
+  .equipment-item {
+    padding: 6px 12px;
+    border-radius: 20px;
+    background-color: #f0f7ff;
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .equipment-item.removed {
+    background-color: var(--neutral-200);
+    color: var(--neutral-500);
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+  
+  .equipment-item.highlight {
+    animation: pulse 1s ease-in-out;
+    background-color: #fff7e6;
+    color: var(--warning);
+  }
+  
+  .equipment-icon {
+    font-size: 14px;
+  }
+  
+  /* 特殊选项模态框 */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+  
+  .special-modal {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+    max-width: 90%;
+    width: 400px;
+    padding: 25px;
+    transform: translateY(20px);
+    transition: transform 0.3s;
+  }
+  
+  .modal-overlay.active .special-modal {
+    transform: translateY(0);
+  }
+  
+  .special-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+  }
+  
+  .special-option {
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: #f0f7ff;
+    border: 1px solid #d6e4ff;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .special-option:hover {
+    background: #d6e4ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(22, 93, 255, 0.1);
+  }
+  
+  .special-option i {
+    font-size: 20px;
+  }
+  
+  .special-option.option-a i {
+    color: var(--success);
+  }
+  
+  .special-option.option-b i {
+    color: var(--danger);
+  }
+  
+  .equipment-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+  }
+  
+  .equipment-selector .equipment-item {
+    cursor: pointer;
+  }
+  
+  .equipment-selector .equipment-item:hover {
+    background-color: #d6e4ff;
+  }
+  
+  .zw-timer {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--danger);
+    text-align: center;
+    margin: 15px 0;
+  }
+  
+  .zw-button {
+    background-color: var(--danger);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 9999px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .zw-button:hover {
+    background-color: #d03050;
+    transform: scale(1.05);
+  }
+  
+  .progress-bar {
+    height: 8px;
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 15px 0;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    background-color: var(--danger);
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+  
+  .floor-change-animation {
+    position: absolute;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--danger);
+    z-index: 10;
+    animation: fallAnimation 1s ease-out forwards;
+  }
+  
+  @keyframes fallAnimation {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(80px); opacity: 0; }
+  }
+  
+  /* 底部按钮容器 */
+  .bottom-button-container {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+    z-index: 30;
+  }
+  
+  .bottom-button {
+    width: 100%;
+    max-width: 500px;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+  }
+  
+  /* 游戏状态指示器 */
+  .game-status-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+  }
+  
+  .status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--success);
+  }
+  
+  .status-dot.inactive {
+    background-color: var(--neutral-300);
+  }
+  
+  /* 双倍事件样式 */
+  .double-event-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background-color: #fff7e6;
+    color: var(--warning);
+    font-size: 0.85rem;
+    margin: 5px 0;
+    font-weight: 500;
+    animation: pulse 1.5s infinite;
+  }
+  
+  .double-event-info {
+    background-color: #f9f0ff;
+    border-left: 3px solid #722ed1;
+    padding: 10px 15px;
+    border-radius: 0 8px 8px 0;
+    margin: 10px 0;
+    font-size: 0.9rem;
+  }
+  
+  /* 响应式调整 */
+  @media (max-height: 700px) {
+    body {
+      padding-top: 20px;
+      padding-bottom: 80px;
+    }
+    
+    .game-card {
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .equipment-item {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+    }
+    
+    .bottom-button {
+      padding: 12px 16px;
+      font-size: 1rem;
+    }
+  }
+</style>
