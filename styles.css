@@ -305,9 +305,17 @@ kbd {
 /* 滚动提示 */
 .scroll-hint {
   position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
   font-family: var(--font-mono); font-size: 11px; letter-spacing: .2em;
   color: var(--hero-soft); z-index: 4;
+  transition: opacity .5s var(--ease), transform .5s var(--ease);
+}
+/* 滚动之后就退场，不打扰阅读 */
+.scroll-hint.is-gone { opacity: 0; transform: translateX(-50%) translateY(10px); pointer-events: none; }
+.scroll-chevron { animation: hintFloat 2.6s var(--ease) infinite; opacity: .7; }
+@keyframes hintFloat {
+  0%, 100% { transform: translateY(-2px); opacity: .35; }
+  50% { transform: translateY(3px); opacity: .9; }
 }
 .scroll-line {
   width: 1px; height: 42px;
@@ -633,6 +641,9 @@ kbd {
 .term-body::-webkit-scrollbar-thumb { background: rgba(245, 241, 232, .16); border-radius: 4px; }
 
 .term-out p { white-space: pre-wrap; word-break: break-word; margin: 0; }
+.term-pre { white-space: pre; overflow-x: auto; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.45; color: #EDE7DC; margin: 3px 0 0; }
+.term-pre::-webkit-scrollbar { height: 4px; }
+.term-pre::-webkit-scrollbar-thumb { background: rgba(245, 241, 232, .16); border-radius: 2px; }
 .term-out b { color: #F7D3B0; font-weight: 700; }
 .term-out .t-dim { color: rgba(237, 231, 220, .45); }
 .term-out .t-ok { color: #E8944F; }
@@ -713,7 +724,12 @@ body.theme-anim, body.theme-anim *, body.theme-anim *::before, body.theme-anim *
   .b-main { padding: 24px; }
   .ai-grid { grid-template-columns: 1fr; }
   .hero-actions .btn, .contact-actions .btn { flex: 1 1 auto; }
-  .scroll-hint { display: none; }
+  /* 手机端也保留下滑引导，但收敛得低调一些 */
+  .scroll-hint { bottom: 20px; gap: 7px; font-size: 10px; letter-spacing: .16em; opacity: .7; }
+  .scroll-line { height: 28px; }
+  /* 棋盘在窄屏里居中并略放大，避免又小又偏 |
+     （box-drawing 与方块字均为等宽窄字符，居中不影响对齐） */
+  .term-pre { text-align: center; font-size: 13.5px; }
   .footer-main { flex-direction: column; align-items: flex-start; gap: 18px; }
 }
 
